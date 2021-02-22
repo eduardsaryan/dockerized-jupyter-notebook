@@ -1,5 +1,8 @@
 # Hidden files
 .gitignore
+.gitattributes
+.dockerignore
 
 # Other files
 .DS_Store
+create-certs.sh

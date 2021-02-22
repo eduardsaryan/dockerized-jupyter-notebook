@@ -1,0 +1,50 @@
+jupyer-web:
+  restart: unless-stopped
+  image: nginx
+  container_name: jupyer-web
+  volumes:
+    - web-root:/var/www/html
+    - certbot-etc:/etc/letsencrypt
+    - certbot-var:/var/lib/letsencrypt
+    - ./nginx/conf:/etc/nginx/conf.d
+  ports:
+    - 80:80
+    - 443:443
+
+certbot:
+    restart: unless-stopped
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+    - web-root:/var/www/html
+    - ./nginx/letsencrypt:/etc/letsencrypt
+    - ./nginx/letsencrypt/var:/var/lib/letsencrypt
+    depends_on:
+        - jupyer-web
+    command: certonly --webroot --webroot-path=/var/www/html --email sammy@example.com --agree-tos --no-eff-email --staging -d example.com  -d www.example.com
+volumes:
+  configs:
+  certbot-etc:
+  certbot-var:
+  web-root:
+
+
+version: '3.4'
+  services:
+    web:
+      container_name: nginx
+      restart: unless-stopped
+      build:
+        context: .
+          args:
+            - CERTBOT_EMAIL=hello@yourcompany.com
+            - DOMAIN_LIST=yourcompany.com
+      volumes:
+        - ./conf:/etc/nginx/conf.d
+        - letsencrypt:/etc/letsencrypt
+      ports:
+        - 80:80
+        - 443:443
+
+volumes:
+    letsencrypt:
