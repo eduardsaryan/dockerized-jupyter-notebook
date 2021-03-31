@@ -1,6 +1,13 @@
 # Base image
 FROM      python:3.6-stretch
 
+# Define ARGs
+ARG       service_user
+ARG       user_id
+ARG       group_id
+ARG       service_dir
+ARG       service_name
+
 # Update system (container) and install necessary utilites
 RUN       apt-get update && apt install -y \
           apt-utils \
@@ -17,21 +24,18 @@ RUN       pip3 install --upgrade pip \
           # &&  pip3 install tabulate
 
 # Create a user with home directory
-RUN       useradd -ms /bin/bash jupyter-user
-
-ARG       service_user
-RUN       RUN useradd -ms /bin/bash $service_user
+RUN       useradd -ms /bin/bash $service_user -u $user_id
 
 
 # Switch to non-root user
-USER      jupyter-user
+USER       $service_user
 
 # Change working directory again
-WORKDIR   /home/jupyter-user
+WORKDIR   /home/$service_user
 
 # Create necessary direcories
-RUN       mkdir -p ./jupyter-project/certs \
-          && mkdir ./jupyter-project/notebook \
+RUN       mkdir -p ./$service_name/certs \
+          && mkdir ./$service_name/$notebook_name \
           && mkdir .jupyter
 
 # Change working directory

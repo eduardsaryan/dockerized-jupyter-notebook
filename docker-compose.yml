@@ -4,11 +4,14 @@ services:
     restart: unless-stopped
     build:
       args:
-        - service_user=$JUPYTER_USER 
+        - service_user=$JUPYTER_USER
+        - user_id=$UID
+        - notebook_name=$NOTEBOOK_NAME
+        - service_dir=$PROJECT_DIR
+        - service_name=$PROJECT_NAME
       dockerfile: Dockerfile
     image: jupyter-notebook:latest
     container_name: notebook
-    # command: ['start-notebook.sh', '--ip', '0.0.0.0', '--no-browser', "--NotebookApp.password='sha1:YOUR_HUSHED_PASSWORD'", "--NotebookApp.ip = '*'"]
     environment:
       CHOWN_HOME: 'yes'
       CHOWN_HOME_OPTS: -R
